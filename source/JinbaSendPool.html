@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">
+var JinbaConfig = require(&#39;./JinbaConfig&#39;);
+
+<span id='JinbaSendPool-method-constructor'><span id='JinbaSendPool'>/**
+</span></span> * SendPool batches requests send to backend.
+ * @constructor
+ */
+function JinbaSendPool()
+{
+    this._pool = [];
+    this._timer = 0;
+    this._send = this.send.bind(this);
+}
+
+JinbaSendPool.prototype = {
+<span id='JinbaSendPool-method-push'>    /**
+</span>     * Add request to pool.
+     * @param {JinbaRequest} obj
+     */
+    push: function (obj)
+    {
+        this._pool.push(obj);
+
+        if (!this._timer) {
+            this._timer = setTimeout(this._send, JinbaConfig.getInstance().batchTimeout);
+        }
+    },
+<span id='JinbaSendPool-method-abort'>    /**
+</span>     * Aborts pending requests.
+     */
+    abort: function()
+    {
+        if (this._timer) {
+            clearTimeout(this._timer);
+            this._timer = 0;
+        }
+        this._pool = [];
+    },
+<span id='JinbaSendPool-method-_getData'>    /**
+</span>     * @returns {Array}
+     * @private
+     */
+    _getData: function ()
+    {
+        var data = [];
+        for (var i = 0, n = this._pool.length; i &lt; n; i++) {
+            data[i] = this._pool[i].toJSON();
+        }
+        this._pool = [];
+        return data;
+    },
+<span id='JinbaSendPool-method-send'>    /**
+</span>     * Send batched requests over the wire.
+     */
+    send: function ()
+    {
+        this._timer = 0;
+
+        var url = JinbaConfig.getInstance().url;
+        var data = this._getData();
+        var transport = JinbaConfig.getInstance().getTransport();
+
+        transport(url, data);
+    }
+};
+
+<span id='JinbaSendPool-method-getInstance'>/**
+</span> * Get singleton instance
+ * @returns {JinbaSendPool}
+ */
+JinbaSendPool.getInstance = function()
+{
+    if (!this._instance) {
+        this._instance = new this();
+    }
+    return this._instance;
+};
+
+module.exports = JinbaSendPool;
+</pre>
+</body>
+</html>

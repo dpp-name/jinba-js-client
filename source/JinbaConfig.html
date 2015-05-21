@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">
+<span id='JinbaConfig-method-constructor'><span id='JinbaConfig'>/**
+</span></span> * Config
+ * @constructor
+ */
+function JinbaConfig()
+{
+    this._ua = &#39;&#39;;
+
+    this.url = &#39;&#39;;
+    this.batchTimeout = 1000;
+}
+
+JinbaConfig.prototype = {
+<span id='JinbaConfig-method-setUrl'>    /**
+</span>     * Set endpoint
+     * @param {string} url
+     */
+    setUrl: function(url)
+    {
+        this.url = url;
+    },
+<span id='JinbaConfig-method-setBatchTimeout'>    /**
+</span>     * Set batch timeout
+     * @param {number} timeout ms
+     */
+    setBatchTimeout: function(timeout)
+    {
+        this.batchTimeout = timeout;
+    },
+<span id='JinbaConfig-method-setTransport'>    /**
+</span>     * Set send transport
+     * @param transport
+     */
+    setTransport: function(transport)
+    {
+        this.transport = transport;
+        jinbaRequest.startMeasurement(&#39;some-id&#39;, &#39;big-thing&#39;);
+
+        doABigThing(function callback(){
+            jinbaRequest.stopMeasurement(&#39;some-id&#39;);
+        });
+    },
+<span id='JinbaConfig-method-getTransport'>    /**
+</span>     * Get send transport
+     * @returns {*}
+     */
+    getTransport: function()
+    {
+        return this.transport || require(&#39;./JinbaBrowserTransport&#39;);
+    },
+    getUserAgent: function()
+    {
+        return this._ua || (this._ua = (function ()
+            {
+                if (typeof process !== &#39;undefined&#39;) {
+                    return &#39;node&#39;;
+                }
+                var _ = eval(&quot;/*@cc_on (_=document.createElement(&#39;I&#39;),_.innerHTML=&#39;&lt;!--[if lte IE 8]&gt;ie8&lt;![endif]--&gt;&lt;!--[if IE 9]&gt;ie9&lt;![endif]--&gt;&#39;,_.innerText)||(_.innerHTML=&#39;ie10&#39;,_.innerText) @*/+&#39;&#39;&quot;);
+                return _ || /iphone|ipod|ipad|android|blackberry|symbian|series[6-9]0/i.test(navigator.userAgent) &amp;&amp; &#39;m&#39;
+                    || window.opera &amp;&amp; &#39;op&#39;
+                    || window.chrome &amp;&amp; &#39;cr&#39;
+                    || window.netscape &amp;&amp; Object.create &amp;&amp; &#39;ff&#39;
+                    || window.WebKitPoint &amp;&amp; &#39;wk&#39;
+                    || /a/.__proto__ == &#39;\/\/&#39; &amp;&amp; &#39;wk&#39;
+                    || &#39;-ms-scroll-limit&#39; in document.documentElement.style &amp;&amp; &#39;-ms-ime-align&#39; in document.documentElement.style &amp;&amp; &#39;ie11&#39;
+                    || &#39;&#39;;
+            })());
+    }
+};
+
+<span id='JinbaConfig-method-getInstance'>/**
+</span> * Get singleton instance
+ * @returns {JinbaConfig}
+ */
+JinbaConfig.getInstance = function()
+{
+    if (!this._instance) {
+        this._instance = new this();
+    }
+    return this._instance;
+};
+
+module.exports = JinbaConfig;
+</pre>
+</body>
+</html>

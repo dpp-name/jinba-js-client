@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">
+var JinbaRequest = require(&#39;./lib/JinbaRequest&#39;);
+var JinbaConfig = require(&#39;./lib/JinbaConfig&#39;);
+var MeasureNetworkTiming = require(&#39;./lib/MeasureNetworkTiming&#39;);
+var MeasureAjaxImages = require(&#39;./lib/MeasureAjaxImages&#39;);
+var AddUserTimings = require(&#39;./lib/AddUserTimings&#39;);
+
+function config(config)
+{
+    var jinbaConfig = JinbaConfig.getInstance();
+    if (config.url) {
+        jinbaConfig.setUrl(config.url);
+    }
+    if (config.batchTimeout) {
+        jinbaConfig.setBatchTimeout(config.batchTimeout);
+    }
+}
+
+module.exports = {
+    config: config,
+    Request: JinbaRequest,
+    MeasureNetworkTiming: MeasureNetworkTiming,
+    MeasureAjaxImages: MeasureAjaxImages,
+    AddUserTimings: AddUserTimings
+};
+</pre>
+</body>
+</html>

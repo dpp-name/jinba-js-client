@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">// Measure images load time after page have been refreshed with some innerHTML&#39;s
+// TODO add IE support, see https://github.com/desandro/imagesloaded/
+
+var JinbaConfig = require(&#39;./JinbaConfig&#39;);
+
+function filter_loaded(a)
+{
+    var b = [];
+    for (var i = 0, n = a.length; i &lt; n; i++) {
+        if (!a[i].complete &amp;&amp; a[i].fileSize != &#39;-1&#39;) {
+            b[b.length] = a[i];
+        }
+    }
+    return b;
+}
+
+var timer = 0, previousJinbaRequest;
+
+function MeasureAjaxImages(jinbaRequest)
+{
+    if (timer) {
+        clearTimeout(timer);
+        timer = 0;
+        previousJinbaRequest.stopMeasurement(&#39;load_img&#39;);
+    }
+
+    previousJinbaRequest = jinbaRequest;
+    jinbaRequest.startMeasurement(&#39;load_img&#39;, &#39;load_img&#39;);
+    if (DEBUG) {
+        var start = +new Date;
+    }
+    var imgs = document.images;
+
+    function test()
+    {
+        imgs = filter_loaded(imgs);
+        if (DEBUG) {
+            console.log(imgs.length, imgs);
+        }
+        if (imgs.length) {
+            timer = setTimeout(test, 50);
+        } else {
+            jinbaRequest.stopMeasurement(&#39;load_img&#39;);
+            previousJinbaRequest = timer = 0;
+            if (DEBUG) {
+                console.log(&#39;ajax_images: &#39; + (+new Date - start));
+            }
+        }
+        return imgs.length;
+    }
+
+    test();
+}
+
+var ua = JinbaConfig.getInstance().getUserAgent();
+if (ua === &#39;ie8&#39; || ua === &#39;ie9&#39; || ua === &#39;ie10&#39;) {
+    // IE8-10 does not support this method of image loading detection and goes into infinity loop.
+    module.exports = function(){};
+} else {
+    module.exports = MeasureAjaxImages;
+}
+</pre>
+</body>
+</html>

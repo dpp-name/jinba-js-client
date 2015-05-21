@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-method-sendData'>/**
+</span> * Send data from browser
+ * @param url
+ * @param data
+ */
+function sendData(url, data)
+{
+    if (!window || !window.JSON || !window.XMLHttpRequest) {
+        console.log(&#39;JinbaBrowserTransport is unavaliable, !window || !window.JSON || !window.XMLHttpRequest === true&#39;);
+        return;
+    }
+    if (!url) {
+        console.log(&#39;JinbaBrowserTransport url is empty&#39;);
+        return;
+    }
+
+    var data_str = JSON.stringify(data);
+
+    if (typeof navigator === &#39;undefined&#39; || !navigator.sendBeacon || !navigator.sendBeacon(url, data_str)) {
+        var t = new XMLHttpRequest();
+        t.open(&#39;POST&#39;, url, true);
+        t.send(data_str);
+    }
+
+    if (DEBUG) {
+        console.log(&#39;Jinba: send &#39; + data.length + &#39; requests&#39;);
+    }
+}
+
+module.exports = sendData;
+</pre>
+</body>
+</html>

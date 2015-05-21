@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">
+<span id='MeasureNetworkTiming-method-constructor'><span id='MeasureNetworkTiming'>/**
+</span></span> * Measure network timing, call once after initial page load.
+ * Call on document ready, before onload.
+ * @param {JinbaRequest} jinbaRequest
+ * @param [is_wa_frame] TODO remove Badoo dependency
+ * @constructor
+ */
+function MeasureNetworkTiming(jinbaRequest, is_wa_frame)
+{
+    var t = typeof window !== &#39;undefined&#39; &amp;&amp; window.performance &amp;&amp; window.performance.timing;
+
+    if (!t) {
+        return;
+    }
+
+    var start = t.navigationStart || t.fetchStart;
+    if (!start) {
+        jinbaRequest.addMeasurement(&#39;navtime_error&#39;, 0);
+        return;
+    }
+
+    jinbaRequest.setTimeStart(start);
+
+    // create fake timer to prevent request from ending before onload
+    jinbaRequest.startMeasurement(&#39;nav-timing&#39;, &#39;&#39;);
+
+    function onload()
+    {
+        jinbaRequest.addMeasurement(&#39;dns&#39;, t.domainLookupEnd - t.domainLookupStart);
+        jinbaRequest.addMeasurement(&#39;connect&#39;, t.connectEnd - t.connectStart);
+        jinbaRequest.addMeasurement(&#39;wait&#39;, t.responseStart - t.connectEnd);
+        jinbaRequest.addMeasurement(&#39;photo_load&#39;, t.loadEventEnd - t.domContentLoadedEventEnd);
+        jinbaRequest.addMeasurement(&#39;on_load&#39;, t.loadEventEnd - start);
+        jinbaRequest.addMeasurement(&#39;response&#39;, t.responseEnd - t.responseStart);
+        jinbaRequest.addMeasurement(&#39;dom_loading&#39;, t.domInteractive - t.responseEnd);
+        jinbaRequest.addMeasurement(&#39;dom_interactive&#39;, t.domContentLoadedEventStart - t.domInteractive);
+        jinbaRequest.addMeasurement(&#39;dom_loaded&#39;, t.domContentLoadedEventEnd - t.domContentLoadedEventStart);
+        jinbaRequest.addMeasurement(&#39;ttfb&#39;, t.responseStart - start);	// time to first byte
+        jinbaRequest.addMeasurement(&#39;backend&#39;, t.responseEnd - start);
+        jinbaRequest.addMeasurement(&#39;dom_ready&#39;, t.domContentLoadedEventStart - start);
+        if (!is_wa_frame) {
+            jinbaRequest.addMeasurement(&#39;usable&#39;, t.domContentLoadedEventEnd - start);
+        }
+        jinbaRequest.deleteMeasurement(&#39;nav-timing&#39;); // remove fake timer
+    }
+
+    function defer_onload()
+    {
+        setTimeout(onload, 0);
+    }
+
+    if (window.addEventListener) {
+        window.addEventListener(&#39;load&#39;, defer_onload, false);
+    } else {
+        window.attachEvent(&#39;onload&#39;, defer_onload);
+    }
+}
+
+module.exports = MeasureNetworkTiming;
+</pre>
+</body>
+</html>
