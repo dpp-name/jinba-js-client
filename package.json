@@ -1,0 +1,25 @@
+{
+  "name": "Jinba JS Client",
+  "version": "0.0.1",
+  "description": "Jinba micro-library helps to collect and send different performance measurements",
+  "keywords": [
+    "jinba",
+    "pinba",
+    "rum",
+    "measurement",
+    "statistics",
+    "network timing api"
+  ],
+  "homepage": "http://dpp.su/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dpp-name/jinba-js-client"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Pavel Dovbush",
+    "email": "dpp@dpp.su",
+    "url": "http://dpp.su/"
+  },
+  "main": "./index.js"
+}
