@@ -1,5 +1,5 @@
 {
-  "name": "Jinba JS Client",
+  "name": "jinba-js-client",
   "version": "0.0.1",
   "description": "Jinba micro-library helps to collect and send different performance measurements",
   "keywords": [
