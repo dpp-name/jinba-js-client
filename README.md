@@ -1,10 +1,10 @@
-# Jinba JavaScript Client
+## Jinba JavaScript Client
 
 Jinba is a micro-library which helps to collect and send different performance measurements.
 
 For Jinba project and examples see https://github.com/dpp-name/jinba
 
-## API
+### API
 
 http://dpp-name.github.io/jinba-js-client/
 
@@ -31,7 +31,7 @@ http://dpp-name.github.io/jinba-js-client/
 </script>
 ```
 
-## Build JavaScript Client
+### Build standalone
 
 Jinba JavaScript client is written using CommonJS module format. You can use it directily in nodejs or use webpack to build for browser.
 
